@@ -2,12 +2,12 @@
 --
 
 <pre>
-<b>contained AlgQuat/ideals.m which works only for invertible ideals!!!
-intrinsic Norm</b>(I::AlgQuatOrdIdl) -> RngElt
+<b>Norm</b>(I::AlgQuatOrdIdl) -> RngElt
 </pre>
 
 *Returns the reduced norm of the ideal I.
-    Based on Voight - Quaternion Algebras 1.0.5 Lemma 16.3.2*
+    This intrinsic overwrites the one already implemented in MAGMA (see AlgQuat/ideals.m) which works only for invertible ideals.
+    This code is based on Voight - Quaternion Algebras 1.0.5 Lemma 16.3.2*
 
 
 # List of instrinsics in ./IsCompatible.m:
