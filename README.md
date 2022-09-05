@@ -14,7 +14,7 @@ Details
 
 For complete complete descriptions and more details we refer to the [`List of commands`](https://github.com/harryjustussmit/IdlClQuat/blob/main/doc/ListOfCommands.md).
 
-In the file [`example_brandt_matr.m`](https://github.com/harryjustussmit/IdlClQuat/blob/main/examples/example_brandt_matr.m) there is the code to see how to use the main functions of the package.
+In the [`file`](https://github.com/harryjustussmit/IdlClQuat/blob/main/examples/example_brandt_matr.m) there is the code to see how to use the main functions of the package.
 
 References
 --
