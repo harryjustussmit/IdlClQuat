@@ -9,10 +9,10 @@
     printf "We create the order O = ZZ + %o*O1 in the algebra B=(-1,-%o/QQ), where O1 is the maximal order Z[i,j,k] of B.\n",s,p;
     O := QuaternionOrder([s*i,s*j,s*k]);
     print "We compute the weak right equivalence classes of O1...\n";
-    time weak_right_classes:= WeakEquivalenceClasses(O : Side:="Right");
+    time weak_right_classes:= WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#weak_right_classes;
     print "We compute the right equivalence classes of O1...\n";
-    time right_classes := EquivalenceClasses(O : Side:="Right");
+    time right_classes := EquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#right_classes;
 
     Nmax:=20;

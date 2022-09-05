@@ -9,7 +9,7 @@ intrinsic BrandtMatrix(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatE
 }
   require Side in {"Left","Right"} : "Side should be either \"Left\" or \"Right\".";
 
-  classes:=EquivalenceClasses(O : Side:=Side);
+  classes:=EquivalenceClassesWithPrescribedOrder(O : Side:=Side);
 
   M := ZeroMatrix(Integers(), #classes);
 

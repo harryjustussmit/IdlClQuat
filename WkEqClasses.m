@@ -2,8 +2,8 @@
 
 freeze;
 
-declare attributes AlgQuatOrd : LeftWeakEquivalenceClasses,
-                                RightWeakEquivalenceClasses;
+declare attributes AlgQuatOrd : LeftWeakEquivalenceClassesWithPrescribedOrder,
+                                RightWeakEquivalenceClassesWithPrescribedOrder;
 
 intrinsic IsWeaklyEquivalent(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl : Side:="Both") -> Bool, Bool
 {
@@ -41,19 +41,19 @@ intrinsic IsWeaklyEquivalent(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl : Side:="Both") 
   end if;
 end intrinsic;
 
-intrinsic WeakEquivalenceClasses(O::AlgQuatOrd : Side:="Left") -> List
+intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgQuatOrd : Side:="Left") -> List
 {
   Given an order in an algebra, compute representatives for the weak left/right equivalence classes of lattices with left/right multiplicator ring equal to O.
 }
   require Side in {"Left","Right"} : "Side should be either \"Left\" or \"Right\".";
 
   // early exit
-  if Side eq "Left" and assigned O`LeftWeakEquivalenceClasses then
-    return O`LeftWeakEquivalenceClasses;
+  if Side eq "Left" and assigned O`LeftWeakEquivalenceClassesWithPrescribedOrder then
+    return O`LeftWeakEquivalenceClassesWithPrescribedOrder;
   end if;
 
-  if Side eq "Right" and assigned O`RightWeakEquivalenceClasses then
-    return O`RightWeakEquivalenceClasses;
+  if Side eq "Right" and assigned O`RightWeakEquivalenceClassesWithPrescribedOrder then
+    return O`RightWeakEquivalenceClassesWithPrescribedOrder;
   end if;
 
   T := MaximalOrder(O); // Only works over number fields or function fields.
@@ -128,26 +128,17 @@ intrinsic WeakEquivalenceClasses(O::AlgQuatOrd : Side:="Left") -> List
 
   // assign attributes
   if Side eq "Left" then
-    O`LeftWeakEquivalenceClasses:=classes;
+    O`LeftWeakEquivalenceClassesWithPrescribedOrder:=classes;
   end if;
 
   if Side eq "Right" then
-    O`RightWeakEquivalenceClasses:=classes;
+    O`RightWeakEquivalenceClassesWithPrescribedOrder:=classes;
   end if;
 
   return classes;
 end intrinsic;
 
 /* TEST
- 
-    Attach("attempt1.m");
-    B<i, j, k> := QuaternionAlgebra(RationalField(), -1, -7);
-    OB := MaximalOrder(B);
-    scale := 2;
-    Oq := QuaternionOrder([scale * i, scale * j, k]);
-    IsGorenstein(Oq);
-    #WeakEquivalenceClasses(Oq : Side:="Left");
-    #WeakEquivalenceClasses(Oq : Side:="Right");
 
 */
 

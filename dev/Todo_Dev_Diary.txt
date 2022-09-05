@@ -1,0 +1,10 @@
+### TODO Coding ###
+- MORE TESTS!!!!
+- Implement OverOrders and TraceDualIdeal.
+- Compute weak equivalence classes by recursively looping over the maximal submodules of O'/ff with trivial extension.
+- Make intrinsics for the (weak) equivalence classes that loop over all overorders. (Could the corresponding Brandt matrices be commutative?)
+
+### DONE kept for record ###
+- Rename WeakEquivalenceClasses with something like WeakEquivalenceClassesWithPrescribedOrder. I think it is better.
+- The same for EquivalenceClasses.
+

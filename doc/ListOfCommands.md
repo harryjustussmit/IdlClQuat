@@ -1,4 +1,4 @@
-# List of instrinsics in ./Norm.m:
+# List of instrinsics in Norm.m:
 --
 
 <pre>
@@ -10,7 +10,7 @@
     This code is based on Voight - Quaternion Algebras 1.0.5 Lemma 16.3.2*
 
 
-# List of instrinsics in ./IsCompatible.m:
+# List of instrinsics in IsCompatible.m:
 --
 
 <pre>
@@ -20,7 +20,7 @@
 *Given two lattices I and J, returns whether or not they are compatible, i.e. if O_R(I) = O_L(J).*
 
 
-# List of instrinsics in ./ColonIdl.m:
+# List of instrinsics in ColonIdl.m:
 --
 
 <pre>
@@ -72,7 +72,7 @@
 *Given an order I and a lattice J, return (I:J)_L, that is, the lattice of elements x in the algebra such that xJ subseteq I.*
 
 
-# List of instrinsics in ./WkEqClasses.m:
+# List of instrinsics in WkEqClasses.m:
 --
 
 <pre>
@@ -82,23 +82,23 @@
 *Returns two booleans by default: firstly whether or not the lattices I and J are weakly left equivalent, secondly whether or not I and J are weakly right equivalent. When "Side" is set to "Left" or "Right", only one of these is returned.*
 
 <pre>
-<b>WeakEquivalenceClasses</b>(O::AlgQuatOrd : Side:="Left") -> List
+<b>WeakEquivalenceClassesWithPrescribedOrder</b>(O::AlgQuatOrd : Side:="Left") -> List
 </pre>
 
 *Given an order in an algebra, compute representatives for the weak left/right equivalence classes of lattices with left/right multiplicator ring equal to O.*
 
 
-# List of instrinsics in ./EqClasses.m:
+# List of instrinsics in EqClasses.m:
 --
 
 <pre>
-<b>EquivalenceClasses</b>(O::AlgQuatOrd : Side:="Left") -> List
+<b>EquivalenceClassesWithPrescribedOrder</b>(O::AlgQuatOrd : Side:="Left") -> List
 </pre>
 
 *Given an order in an algebra, compute representatives for the left/right equivalence classes of lattices with left/right multiplicator ring equal to O.*
 
 
-# List of instrinsics in ./BrandtMat.m:
+# List of instrinsics in BrandtMat.m:
 --
 
 <pre>
