@@ -1,0 +1,3 @@
+To rebuild or update the documentation, simply move to this (doc/) folder and run the following command:
+    make
+Everything is automatic (using MAGMA).
