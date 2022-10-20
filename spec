@@ -1,4 +1,5 @@
 {
+Index.m
 Norm.m
 IsCompatible.m
 ColonIdl.m

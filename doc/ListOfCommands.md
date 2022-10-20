@@ -1,3 +1,13 @@
+# List of instrinsics in Index.m:
+--
+
+<pre>
+<b>Index</b>(I::AlgQuatOrdIdl,J::AlgQuatOrdIdl) -> RngElt
+</pre>
+
+*Returns the index [I:J].*
+
+
 # List of instrinsics in Norm.m:
 --
 
@@ -107,5 +117,13 @@
 
 *Given an integer n and and order O, let I_1, ..., I_s be (full) list of left/right equivalence classes of ideals with equal left/right multiplicator ring O.
     It returnsthe nth Brandt matrix B(n), that is, the matrix in which the (i,j)th entry is the number of sublattices of I_j, left/right equivalent to I_i, with reduced norm equal to n * nrd(I_j).*
+
+<pre>
+<b>BrandtMatrix</b>(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatElt
+</pre>
+
+*//     Given an integer n and and order O, let I_1, ..., I_s be (full) list of left/right equivalence classes of ideals with equal left/right multiplicator ring O.
+//     It returnsthe nth Brandt matrix B(n), that is, the matrix in which the (i,j)th entry is the number of sublattices of I_j, left/right equivalent to I_i, with reduced norm equal to n * nrd(I_j).
+//*
 
 
