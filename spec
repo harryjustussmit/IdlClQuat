@@ -3,6 +3,7 @@ Index.m
 Norm.m
 IsCompatible.m
 ColonIdl.m
+IsInvertible.m
 WkEqClasses.m
 EqClasses.m
 BrandtMat.m

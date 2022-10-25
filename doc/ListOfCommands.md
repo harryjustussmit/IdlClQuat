@@ -82,6 +82,22 @@
 *Given an order I and a lattice J, return (I:J)_L, that is, the lattice of elements x in the algebra such that xJ subseteq I.*
 
 
+# List of instrinsics in IsInvertible.m:
+--
+
+<pre>
+<b>IsRightInvertible</b>(I::AlgQuatOrdIdl) -> BoolElt
+</pre>
+
+*Given a lattice I returns whether it is right invertible, that is, I*(OL(I):I)_R eq OL(I) and the product is compatible.*
+
+<pre>
+<b>IsLeftInvertible</b>(I::AlgQuatOrdIdl) -> BoolElt
+</pre>
+
+*Given a lattice I returns whether it is left invertible, that is, (OR(I):I)_L*I eq OR(I) and the product is compatible.*
+
+
 # List of instrinsics in WkEqClasses.m:
 --
 

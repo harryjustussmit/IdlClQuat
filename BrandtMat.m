@@ -2,6 +2,8 @@
 
 freeze;
 
+declare verbose BrandtMatr,2;
+
 // Sum of colums is not p+1 where it should be.... investigate
 intrinsic BrandtMatrix(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatElt
 {
@@ -23,9 +25,16 @@ intrinsic BrandtMatrix(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatE
           sqrt:=sqrt_num/sqrt_den;
           assert test1 and test2;
           norm:=n/sqrt; 
-          i,j,ind;
+          vprint BrandtMatr,2: i,j,ind;
           IjcolonIiq := LeftColonIdeal(Ij, Ii);
-          enum:=Enumerate(IjcolonIiq, norm, norm);
+          enum:=Enumerate(IjcolonIiq, norm, norm); //elements of reduced norm = norm, up to a sign. Because of this we multiply by 2 in the definition of M[i,j].
+          assert forall{ a : a in enum | Norm(a) eq norm };
+          for a in enum do
+              assert forall{z : z in ZBasis(Ii) | a*z in Ij};
+              ind_a:=Index(Ij,rideal<O|[a*z : z in ZBasis(Ii)]>);
+              //norm,ind_a;
+              assert ind_a eq n^2;
+          end for;
           M[i,j] := 2*#enum/#Units(LeftOrder(Ii));
       end for;
       return M;
@@ -40,7 +49,6 @@ intrinsic BrandtMatrix(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatE
           sqrt:=sqrt_num/sqrt_den;
           assert test1 and test2;
           norm:=n/sqrt; 
-          //i,j,norm,sqrt;
           IjcolonIiq := RightColonIdeal(Ij, Ii);
           enum:=Enumerate(IjcolonIiq, norm, norm);
           M[i,j] := 2*#enum/#Units(RightOrder(Ii));
