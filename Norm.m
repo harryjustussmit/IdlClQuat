@@ -15,3 +15,4 @@ intrinsic Norm(I::AlgQuatOrdIdl) -> RngElt
   num:=GCD([ Integers() ! (x*den) : x in seq ]);
   return num/den;
 end intrinsic;
+

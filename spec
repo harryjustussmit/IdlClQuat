@@ -1,7 +1,7 @@
 {
 Index.m
-Norm.m
 IsCompatible.m
+Norm.m
 ColonIdl.m
 IsInvertible.m
 WkEqClasses.m

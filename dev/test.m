@@ -1,6 +1,7 @@
 /* vim: set syntax=magma :*/
 
     AttachSpec("~/IdlClQuat/spec");
+    Attach("~/IdlClQuat/dev/BrandtMat_naive.m");
 
     p:=3;
     s:=2;
@@ -20,10 +21,10 @@
     Nmax:=11;
     printf "For n in [1..%o] we compute the n-th extended Brandt matrix, where extended stand for the fact we consider also non-invertible classes\n",Nmax;
     for n in [1..Nmax] do
-        B:=BrandtMatrix(n,O : Side:="Right");
+        B:=BrandtMatrix_naive(n,O : Side:="Right");
         printf "%o:\n%o \n\n",n,B;
     end for;
-
+/*
     printf "We compute the coefficients of the modular forms corresponding to each i,j-entry of the Brandt matrices computed above:\n";
     mfs:=[];
     prec_max := 50;
@@ -40,7 +41,7 @@
         end for;
         Append(~mfs,mfsi);
     end for;
-
+*/
 /*  //the following code is useful to print the output of the above in LaTex format
     latex_print:=function(B)
     // this function helps to print the Brandt matrices into latex code. Some small modifications by hand are needed.
