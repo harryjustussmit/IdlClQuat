@@ -29,6 +29,7 @@ intrinsic BrandtMatrix(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatE
           IjcolonIiq := LeftColonIdeal(Ij, Ii);
           enum:=Enumerate(IjcolonIiq, norm, norm); //elements of reduced norm = norm, up to a sign. Because of this we multiply by 2 in the definition of M[i,j].
           assert forall{ a : a in enum | Norm(a) eq norm };
+          assert 2*#enum/#Units(LeftOrder(Ii)) eq #Seqset([ rideal<O|[a*z : z in ZBasis(Ii)]> : a in enum ]); 
           for a in enum do
               assert forall{z : z in ZBasis(Ii) | a*z in Ij};
               ind_a:=Index(Ij,rideal<O|[a*z : z in ZBasis(Ii)]>);

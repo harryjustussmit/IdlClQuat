@@ -3,27 +3,39 @@
     AttachSpec("~/IdlClQuat/spec");
     Attach("~/IdlClQuat/dev/BrandtMat_naive.m");
 
-    p:=3;
-    s:=2;
+    // p:=3; s:=2; //exin the paper
+    p:=5; s:=4;
     B<i, j, k> := QuaternionAlgebra(RationalField(), -1, -p);
     O1 := MaximalOrder(B);
     printf "We create the order O = ZZ + %o*O1 in the algebra B=(-1,-%o/QQ), where O1 is the maximal order Z[i,j,k] of B.\n",s,p;
     O := QuaternionOrder([s*i,s*j,s*k]);
-    print "We compute the weak right equivalence classes of O1...\n";
+    print "We compute the weak right equivalence classes of O...\n";
     time weak_right_classes:= WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#weak_right_classes;
-    print "We compute the right equivalence classes of O1...\n";
+    print "We compute the right equivalence classes of O...\n";
     time right_classes := EquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#right_classes;
 
     #[* I : I in right_classes | IsRightInvertible(I) *];
 
-    Nmax:=11;
-    printf "For n in [1..%o] we compute the n-th extended Brandt matrix, where extended stand for the fact we consider also non-invertible classes\n",Nmax;
-    for n in [1..Nmax] do
-        B:=BrandtMatrix_naive(n,O : Side:="Right");
-        printf "%o:\n%o \n\n",n,B;
+    "discriminants of O1 and O",
+    Discriminant(O1),
+    Discriminant(O);
+    for n in [1] cat PrimesUpTo(101) do
+        "\nn=",n, ", n mod p+1 = ", n mod (p+1);
+        "using Enumerate";
+        B:=BrandtMatrix(n,O : Side:="Right");
+        rr:=[&+Eltseq(r): r in Rows(Transpose(B)) ];
+        "sum of each columns == n+1",
+        #Seqset(rr) eq 1 and rr[1] eq n+1; 
+        //B;
+        
+        //"naive approach";
+        //Bn:=BrandtMatrix_naive(n,O : Side:="Right");
+        //Bn;
+        //"B == B_naive ? ",B eq Bn;
     end for;
+
 /*
     printf "We compute the coefficients of the modular forms corresponding to each i,j-entry of the Brandt matrices computed above:\n";
     mfs:=[];

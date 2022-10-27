@@ -1,0 +1,28 @@
+/* vim: set syntax=magma :*/
+
+    AttachSpec("~/IdlClQuat/spec");
+    Attach("~/IdlClQuat/dev/BrandtMat_naive.m");
+
+    // this is example 41.1.2, page 750 from JV's book on Quaternions v. 1.0.5
+
+    p:=23;
+    B<i, j, k> := QuaternionAlgebra(RationalField(), -1, -p);
+    O := MaximalOrder(B);
+    time weak_right_classes:= WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
+    printf "...there are %o of them.\n",#weak_right_classes;
+    assert #weak_right_classes eq 1;
+    print "We compute the right equivalence classes of O1...\n";
+    time right_classes := EquivalenceClassesWithPrescribedOrder(O : Side:="Right");
+    printf "...there are %o of them.\n",#right_classes;
+    assert #right_classes eq 3;
+
+    for n in [1] cat PrimesUpTo(101) do
+        "\nn=",n;
+        "using Enumerate";
+        B:=BrandtMatrix(n,O : Side:="Right");
+        B;
+        "naive approach";
+        Bn:=BrandtMatrix_naive(n,O : Side:="Right");
+        Bn;
+        "B == B_naive ? ",B eq Bn;
+    end for;

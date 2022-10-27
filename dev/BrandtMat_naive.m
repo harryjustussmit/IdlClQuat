@@ -4,7 +4,7 @@ freeze;
 
 declare verbose BrandtMatr_naive,2;
 
-intrinsic MyIsRightIsomorphic(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl) -> BoolElt,Map,AlgQuatElt
+intrinsic MyIsRightIsomorphic(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl) -> BoolElt,AlgQuatElt
 { Returns whether there exists x such that xI=J. The inbuilt IsRightIsomorphic gives false positives for non-invertible ideals :-( }
     if IsRightInvertible(I) and IsRightInvertible(J) then
         test,_,x:=IsRightIsomorphic(I,J);
@@ -56,7 +56,8 @@ intrinsic BrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> A
           mat_den:=Matrix(zb_nIj);
           rel:=[F ! Eltseq(x) : x in Rows(mat_den*mat_num^-1)];
           Q,q:=quo<F|rel>;
-        
+
+          /*        
           // LowIndexProcess seems to produce more subgroups than Subgroups, and it is slower. This is very weird.
           QP,f:=FPGroup(Q);
           subg:=LowIndexProcess(QP,<n^2,n^2>);
@@ -74,7 +75,8 @@ intrinsic BrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> A
                 end if;
             end if;
           end while;
-          /* with Subgroups, much slower because we need to generate all subgroups and then sieve out the ones that have the Index = n^2
+          */
+          // with Subgroups, much slower because we need to generate all subgroups and then sieve out the ones that have the Index = n^2
           subg:=Subgroups(Q);
           for H in subg do
             if Index(Q,H`subgroup) eq n^2 then
@@ -88,7 +90,6 @@ intrinsic BrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> A
                 end if;
             end if;
           end for;
-          */
           M[i,j] := #Js;
       end for;
       return M;
