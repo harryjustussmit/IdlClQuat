@@ -2,6 +2,7 @@
 Index.m
 IsCompatible.m
 Norm.m
+Quotients.m
 ColonIdl.m
 IsInvertible.m
 WkEqClasses.m
