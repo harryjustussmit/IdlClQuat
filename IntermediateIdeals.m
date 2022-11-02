@@ -2,11 +2,9 @@
 
 freeze;
 
-intrinsic MinimalIntermediateRightIdeals(O::AlgQuatOrd,I::AlgQuatOrdIdl,J::AlgQuatOrdIdl)->List
+intrinsic MinimalIntermediateRightIdeals(O::AlgAssVOrd,I::AlgAssVOrdIdl,J::AlgAssVOrdIdl)->List
 { Given fractional right-O-ideals J subset I, returns the minimal (with respect to inclusion) fractional right-O-ideals K such that J subset K subset I. Note that J is not a minimal. }
-    assert2 forall{z : z in ZBasis(O) | z in RightOrder(I)};
-    assert2 forall{z : z in ZBasis(O) | z in RightOrder(J)};
-    if rideal<O|ZBasis(J)> eq rideal<O|ZBasis(I)> then 
+    if I eq J then 
         return {@ @};
     else
         zbJ:=ZBasis(J);
@@ -43,9 +41,13 @@ intrinsic MinimalIntermediateRightIdeals(O::AlgQuatOrd,I::AlgQuatOrdIdl,J::AlgQu
     end if;
 end intrinsic;
 
-intrinsic IntermediateIdealsWithPrescribedRightOrder(O::AlgQuatOrd,I::AlgQuatOrdIdl,J::AlgQuatOrdIdl)->List
+intrinsic IntermediateIdealsWithPrescribedRightOrder(O::AlgAssVOrd,I::AlgAssVOrdIdl,J::AlgAssVOrdIdl)->List
 { Given an order O in a quaternion algebra, and two fractional right-O-ideals J subset I, it returns a list containing all right-O-ideals K with I subset K subset J and right order O. They are produced recursively from the minimal right-O-ideals. }
-    assert forall{z : z in ZBasis(J) | z in I }; // need J subset I 
+    assert forall{ z : z in ZBasis(O) | z in RightOrder(J) };
+    assert forall{ z : z in ZBasis(O) | z in RightOrder(I) };
+    J:=rideal< O | ZBasis(J)>;
+    I:=rideal< O | ZBasis(I)>;
+    assert J subset I;
     queue:={@ J @};
     if RightOrder(J) eq O then
         output:={@ J @};
@@ -57,8 +59,11 @@ intrinsic IntermediateIdealsWithPrescribedRightOrder(O::AlgQuatOrd,I::AlgQuatOrd
         pot_new:=&join[MinimalIntermediateRightIdeals(O,I,elt) : elt in queue ];
         output join:={@ K : K in pot_new | not K in done and RightOrder(K) eq O @};
         done join:=queue;
+//"pot_new=",pot_new;
+//"done=",done;
         queue := pot_new diff done;
     end while;
+    assert2 #output eq #[ rideal<O | ZBasis(I)> : I in output];
     return output;
 end intrinsic;
 

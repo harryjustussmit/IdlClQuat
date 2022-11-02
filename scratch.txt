@@ -1,0 +1,37 @@
+/* vim: set syntax=magma :*/
+
+    Attach("ColonIdl.m");
+    QQ:=RationalsAsNumberField();
+    a:=-1; 
+    b:=-3;
+    s:=2;
+    B<i,j,k>:=QuaternionAlgebra(QQ,a,b); B;
+    O:=Order([s*i,s*j,s*k]);
+    O1:=MaximalOrder(O);
+    "IsEichler(O)",IsEichler(O);
+    Attach("Index.m");
+    "Index(O1,O)",Index(O1,O);
+    O eq O1;
+    cc0:=LeftColonIdeal(O,O1);
+    ZBasis(cc0);
+    cc:=RightColonIdeal(O,O1);
+    ZBasis(cc);
+
+    // for s=2, cc and cc0 have the same ZBasis but not recognized as equal, unless redifined :-(
+    cc eq cc0;
+    cc cmpeq cc0;
+    rideal<O|ZBasis(cc)> eq rideal<O|ZBasis(cc0)>;
+    ZBasis(cc) eq ZBasis(cc0);
+    
+    Attach("Quotients.m");
+    Q,q:=Quotient(1*O1,cc);
+    
+    Attach("IntermediateIdeals.m");
+    //time #IntermediateIdealsWithPrescribedRightOrder(O,1*O1,cc);
+
+    Attach("WkEqClasses.m");
+    time wk:=WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right" ); #wk;
+
+    //quit;
+
+

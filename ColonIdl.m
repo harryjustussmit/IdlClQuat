@@ -12,7 +12,7 @@ hnf:=function(M)
   return H;
 end function;
 
-intrinsic RightColonIdeal(I::AlgQuatOrdIdl,J::AlgQuatOrdIdl) -> AlgQuatOrdIdl
+intrinsic RightColonIdeal(I::AlgAssVOrdIdl,J::AlgAssVOrdIdl) -> AlgAssVOrdIdl
 {
     Given two lattices I and J, return (I:J)_R, that is, the lattice of elements x in the algebra such that Jx subseteq I.
 }
@@ -34,7 +34,7 @@ intrinsic RightColonIdeal(I::AlgQuatOrdIdl,J::AlgQuatOrdIdl) -> AlgQuatOrdIdl
   return IJ;
 end intrinsic;
 
-intrinsic LeftColonIdeal(I::AlgQuatOrdIdl,J::AlgQuatOrdIdl) -> AlgQuatOrdIdl
+intrinsic LeftColonIdeal(I::AlgAssVOrdIdl,J::AlgAssVOrdIdl) -> AlgAssVOrdIdl
 {
     Given two lattices I and J, return (I:J)_L, that is, the lattice of elements x in the algebra such that xJ subseteq I.
 }
@@ -55,32 +55,32 @@ intrinsic LeftColonIdeal(I::AlgQuatOrdIdl,J::AlgQuatOrdIdl) -> AlgQuatOrdIdl
   return IJ;
 end intrinsic;
 
-intrinsic RightColonIdeal(I::AlgQuatOrd,J::AlgQuatOrd) -> AlgQuatOrdIdl
+intrinsic RightColonIdeal(I::AlgAssVOrd,J::AlgAssVOrd) -> AlgAssVOrdIdl
 { Given two orders I and J, return (I:J)_R, that is, the lattice of elements x in the algebra such that Jx subseteq I. }
   return RightColonIdeal(ideal<I|1>,ideal<J|1>);
 end intrinsic;
 
-intrinsic LeftColonIdeal(I::AlgQuatOrd,J::AlgQuatOrd) -> AlgQuatOrdIdl
+intrinsic LeftColonIdeal(I::AlgAssVOrd,J::AlgAssVOrd) -> AlgAssVOrdIdl
 { Given two orders I and J, return (I:J)_L, that is, the lattice of elements x in the algebra such that xJ subseteq I. }
   return LeftColonIdeal(ideal<I|1>,ideal<J|1>);
 end intrinsic;
 
-intrinsic RightColonIdeal(I::AlgQuatOrdIdl,J::AlgQuatOrd) -> AlgQuatOrdIdl
+intrinsic RightColonIdeal(I::AlgAssVOrdIdl,J::AlgAssVOrd) -> AlgAssVOrdIdl
 { Given a lattice I and an order J, return (I:J)_R, that is, the lattice of elements x in the algebra such that Jx subseteq I. }
   return RightColonIdeal(I,ideal<J|1>);
 end intrinsic;
 
-intrinsic LeftColonIdeal(I::AlgQuatOrdIdl,J::AlgQuatOrd) -> AlgQuatOrdIdl
+intrinsic LeftColonIdeal(I::AlgAssVOrdIdl,J::AlgAssVOrd) -> AlgAssVOrdIdl
 { Given a lattice I and an order J, return (I:J)_L, that is, the lattice of elements x in the algebra such that xJ subseteq I. }
   return LeftColonIdeal(I,ideal<J|1>);
 end intrinsic;
 
-intrinsic RightColonIdeal(I::AlgQuatOrd,J::AlgQuatOrdIdl) -> AlgQuatOrdIdl
+intrinsic RightColonIdeal(I::AlgAssVOrd,J::AlgAssVOrdIdl) -> AlgAssVOrdIdl
 { Given an order I and a lattice J, return (I:J)_R, that is, the lattice of elements x in the algebra such that Jx subseteq I. }
   return RightColonIdeal(ideal<I|1>,J);
 end intrinsic;
 
-intrinsic LeftColonIdeal(I::AlgQuatOrd,J::AlgQuatOrdIdl) -> AlgQuatOrdIdl
+intrinsic LeftColonIdeal(I::AlgAssVOrd,J::AlgAssVOrdIdl) -> AlgAssVOrdIdl
 { Given an order I and a lattice J, return (I:J)_L, that is, the lattice of elements x in the algebra such that xJ subseteq I. }
   return LeftColonIdeal(ideal<I|1>,J);
 end intrinsic;

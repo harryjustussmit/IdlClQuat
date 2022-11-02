@@ -2,10 +2,29 @@
 
 freeze;
 
-declare attributes AlgQuatOrd : LeftWeakEquivalenceClassesWithPrescribedOrder,
+declare attributes AlgAssVOrd : LeftWeakEquivalenceClassesWithPrescribedOrder,
                                 RightWeakEquivalenceClassesWithPrescribedOrder;
 
-intrinsic IsWeaklyEquivalent(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl : Side:="Both") -> Bool, Bool
+hnf:=function(M)
+//input: a matrix over RationalsOverNumberField()
+//output: the matrix in HNF and the denominator
+  M:=ChangeRing(M,Rationals());
+  d:=Denominator(M);
+  M:=ChangeRing(d*M,Integers());
+  N:=Rank(M);
+  H:=HermiteForm(M);
+  H:=Matrix(Rows(H)[1..N]);
+  H:=(1/d)*H;
+  d:=Denominator(H);
+  return <d,d*H>;
+end function;
+
+my_eq:=function(I,J)
+// given lattices I and J check if I = J
+    return hnf(Matrix(ZBasis(I))) eq hnf(Matrix(ZBasis(J)));
+end function;
+
+intrinsic IsWeaklyEquivalent(I::AlgAssVOrdIdl, J::AlgAssVOrdIdl : Side:="Both") -> Bool, Bool
 {
   Returns two booleans by default: firstly whether or not the lattices I and J are weakly left equivalent, secondly whether or not I and J are weakly right equivalent. When "Side" is set to "Left" or "Right", only one of these is returned.
 }
@@ -15,10 +34,14 @@ intrinsic IsWeaklyEquivalent(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl : Side:="Both") 
   if Side ne "Left" then
     IcolonJleft := LeftColonIdeal(I, J);
     JcolonIleft := LeftColonIdeal(J, I);
+    OL:=LeftOrder(IcolonJleft);
+    OR:=RightOrder(IcolonJleft);
     weaklyrightequivalent := IsCompatible(IcolonJleft, JcolonIleft) and
     IsCompatible(JcolonIleft, IcolonJleft) and
     ((IcolonJleft * JcolonIleft) eq ideal<LeftOrder(IcolonJleft) | 1>) and
-    ((JcolonIleft * IcolonJleft) eq ideal<RightOrder(IcolonJleft) | 1>);
+    ((JcolonIleft * IcolonJleft) eq ideal<RightOrder(IcolonJleft) | 1>);   
+    //my_eq((IcolonJleft * JcolonIleft),OL) and 
+    //my_eq((JcolonIleft * IcolonJleft),OR);
   end if;
 
   if Side ne "Right" then
@@ -41,11 +64,17 @@ intrinsic IsWeaklyEquivalent(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl : Side:="Both") 
   end if;
 end intrinsic;
 
-intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgQuatOrd : Side:="Left") -> List
+intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgAssVOrd : Side:="Left") -> List
 {
   Given an order in an algebra, compute representatives for the weak left/right equivalence classes of lattices with left/right multiplicator ring equal to O.
 }
   require Side in {"Left","Right"} : "Side should be either \"Left\" or \"Right\".";
+    
+  method:="IntermediateRightIdealsWithPrescribedRightOrder";
+  // method:="LowIndexProcess"; //for debug
+  method:="Subgroups"; //for debug
+   
+  "Using method : ",method; 
 
   // early exit
   if Side eq "Left" and assigned O`LeftWeakEquivalenceClassesWithPrescribedOrder then
@@ -67,85 +96,90 @@ intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgQuatOrd : Side:="Left"
     ff := LeftColonIdeal(O, T);
   end if;
   classes:=[* *];
-  ///////////////////////////////////////////////
-  // Using IntermediateIdealsWithPrescribediRightOrder
-  candidates:=IntermediateIdealsWithPrescribedRightOrder(O,1*T,ff);
-  for I in candidates do
-    if not exists{ J : J in classes | IsWeaklyEquivalent(I,J : Side:=Side)} then
-        Append(~classes,I);
-    end if;
-  end for;
-  ///////////////////////////////////////////////
-   
-  /*
-  ///////////////////////////////////////////////
-  // LowIndexProcess seems to produce more subgroups than Subgroups, and it is slower. This is very weird.
-  T_ZBasis := ZBasis(T);
-  ff_ZBasis := ZBasis(ff);
-  F:=FreeAbelianGroup(Degree(Algebra(O)));
-  matT:=Matrix(T_ZBasis);
-  matff:=Matrix(ff_ZBasis);
-  rel:=[F ! Eltseq(x) : x in Rows(matff*matT^-1)];
-  Q,q:=quo<F|rel>; 
-  QP,f:=FPGroup(Q);
-  subg:=LowIndexProcess(QP,<1,#QP>);
+  if method eq "IntermediateRightIdealsWithPrescribedRightOrder" then
+      ///////////////////////////////////////////////
+      // Using IntermediateIdealsWithPrescribediRightOrder
+      //TODO the Left case
+      assert Side eq "Right";
+      candidates:=IntermediateIdealsWithPrescribedRightOrder(O,1*T,ff);
+      for I in candidates do
+        if not exists{ J : J in classes | IsWeaklyEquivalent(I,J : Side:=Side)} then
+            Append(~classes,I);
+        end if;
+      end for;
+      ///////////////////////////////////////////////
+  end if; 
+  if method eq "LowIndexProcess" then
+      ///////////////////////////////////////////////
+      // LowIndexProcess seems to produce more subgroups than Subgroups, and it is slower. This is very weird.
+      T_ZBasis := ZBasis(T);
+      ff_ZBasis := ZBasis(ff);
+      F:=FreeAbelianGroup(Degree(Algebra(O)));
+      matT:=Matrix(T_ZBasis);
+      matff:=Matrix(ff_ZBasis);
+      rel:=[F ! Eltseq(x) : x in Rows(matff*matT^-1)];
+      Q,q:=quo<F|rel>; 
+      QP,f:=FPGroup(Q);
+      "QP=",QP;
+      subg:=LowIndexProcess(QP,<1,#QP>);
 
-  iH:=0;
-  while not IsEmpty(subg) do
-    iH +:=1;
-    iH;
-    H := ExtractGroup(subg);
-    NextSubgroup(~subg);
-    geninF:=[(f(QP ! x))@@q : x in Generators(H)];
-    coeff:=[Eltseq(x) : x in geninF];
+      iH:=0;
+      while not IsEmpty(subg) do
+        iH +:=1;
+        H := ExtractGroup(subg);
+        NextSubgroup(~subg);
+        geninF:=[(f(QP ! x))@@q : x in Generators(H)];
+        coeff:=[Eltseq(x) : x in geninF];
 
-    if Side eq "Left" then
-      I:=lideal<O| [&+[T_ZBasis[i]*x[i] : i in [1..#T_ZBasis]] : x in coeff] cat ff_ZBasis>;
-      OI:=LeftOrder(I);
-    end if;
+        if Side eq "Left" then
+          I:=lideal<O| [&+[T_ZBasis[i]*x[i] : i in [1..#T_ZBasis]] : x in coeff] cat ff_ZBasis>;
+          OI:=LeftOrder(I);
+        end if;
 
-    if Side eq "Right" then
-      I:=rideal<O| [&+[T_ZBasis[i]*x[i] : i in [1..#T_ZBasis]] : x in coeff] cat ff_ZBasis>;
-      OI:=RightOrder(I);
-    end if;
+        if Side eq "Right" then
+          I:=rideal<O| [&+[T_ZBasis[i]*x[i] : i in [1..#T_ZBasis]] : x in coeff] cat ff_ZBasis>;
+          OI:=RightOrder(I);
+        end if;
 
-    if OI eq O and not exists{J : J in classes | IsWeaklyEquivalent(I, J : Side:=Side)} then
-      Append(~classes,I);
-    end if;
-  end while;
-  ///////////////////////////////////////////////
-  */
-  /*
-  ///////////////////////////////////////////////
-  // using Subgroups. Kept for debug purposes.
-  T_ZBasis := ZBasis(T);
-  ff_ZBasis := ZBasis(ff);
-  F:=FreeAbelianGroup(Degree(Algebra(O)));
-  matT:=Matrix(T_ZBasis);
-  matff:=Matrix(ff_ZBasis);
-  rel:=[F ! Eltseq(x) : x in Rows(matff*matT^-1)];
-  Q,q:=quo<F|rel>; 
-  subg:=Subgroups(Q);
-  for H in subg do
-    gensinF:=[(Q!g)@@q : g in Generators(H`subgroup)];
-    coeff:=[Eltseq(x) : x in gensinF];
+        if OI eq O and not exists{J : J in classes | IsWeaklyEquivalent(I, J : Side:=Side)} then
+          Append(~classes,I);
+        end if;
+      end while;
+      ///////////////////////////////////////////////
+  end if; 
+  if method eq "Subgroups" then
+      ///////////////////////////////////////////////
+      // using Subgroups. Kept for debug purposes.
+      T_ZBasis := ZBasis(T);
+      ff_ZBasis := ZBasis(ff);
+      F:=FreeAbelianGroup(Degree(Algebra(O)));
+      matT:=Matrix(T_ZBasis);
+      matff:=Matrix(ff_ZBasis);
+      rel:=[F ! Eltseq(x) : x in Rows(matff*matT^-1)];
+      Q,q:=quo<F|rel>; 
+      "Q=",Q;
+      subg:=Subgroups(Q);
+      "subg=",#subg;
+      for H in subg do
+        gensinF:=[(Q!g)@@q : g in Generators(H`subgroup)];
+        coeff:=[Eltseq(x) : x in gensinF];
 
-    if Side eq "Left" then
-      I:=lideal<O| [&+[T_ZBasis[i]*x[i] : i in [1..#T_ZBasis]] : x in coeff] cat ff_ZBasis>;
-      OI:=LeftOrder(I);
-    end if;
+        if Side eq "Left" then
+          I:=lideal<O| [&+[T_ZBasis[i]*x[i] : i in [1..#T_ZBasis]] : x in coeff] cat ff_ZBasis>;
+          OI:=LeftOrder(I);
+        end if;
 
-    if Side eq "Right" then
-      I:=rideal<O| [&+[T_ZBasis[i]*x[i] : i in [1..#T_ZBasis]] : x in coeff] cat ff_ZBasis>;
-      OI:=RightOrder(I);
-    end if;
+        if Side eq "Right" then
+          I:=rideal<O| [&+[T_ZBasis[i]*x[i] : i in [1..#T_ZBasis]] : x in coeff] cat ff_ZBasis>;
+          OI:=RightOrder(I);
+        end if;
 
-    if OI eq O and not exists{J : J in classes | IsWeaklyEquivalent(I, J : Side:=Side)} then
-      Append(~classes,I);
-    end if;
-  end for;
-  ///////////////////////////////////////////////
-  */
+        if OI eq O and not exists{J : J in classes | IsWeaklyEquivalent(I, J : Side:=Side)} then
+          Append(~classes,I);
+        end if;
+      end for;
+      ///////////////////////////////////////////////
+  end if;
 
   // assign attributes
   if Side eq "Left" then

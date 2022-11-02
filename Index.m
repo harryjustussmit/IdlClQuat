@@ -2,13 +2,22 @@
 
 freeze;
 
-intrinsic Index(I::AlgQuatOrdIdl,J::AlgQuatOrdIdl) -> RngElt
+intrinsic Index(I::AlgAssVOrdIdl,J::AlgAssVOrdIdl) -> RngElt
 {
     Returns the index [I:J].
 }
-  require Type(BaseField(Algebra(I))) eq FldRat : "Only for Rational Quaternion Algebras";
-  zbI:=Abs(Determinant(Matrix(ZBasis(I))));
-  zbJ:=Abs(Determinant(Matrix(ZBasis(J))));
+  zbI:=Determinant(Matrix(ZBasis(I)));
+  zbJ:=Determinant(Matrix(ZBasis(J)));
   ind:=zbJ/zbI;
-  return ind;
+  return Abs(Norm(ind));
+end intrinsic;
+
+intrinsic Index(I::AlgAssVOrd,J::AlgAssVOrd) -> RngElt
+{
+    Returns the index [I:J].
+}
+  zbI:=Determinant(Matrix(ZBasis(I)));
+  zbJ:=Determinant(Matrix(ZBasis(J)));
+  ind:=zbJ/zbI;
+  return Abs(Norm(ind));
 end intrinsic;
