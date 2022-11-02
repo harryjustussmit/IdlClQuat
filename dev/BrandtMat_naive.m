@@ -4,6 +4,8 @@ freeze;
 
 declare verbose BrandtMatr_naive,2;
 
+// TODO In both BrandtMatrix_naive and InvBrandtMatrix_naive it would be better to have an IntermediateIdeals with goes through the ideals using MaximalIntermediateIdeals instead of the minimal one. The reason is that then we can stop use the fact that we are looking only for ideals of order n^2.
+
 intrinsic MyIsRightIsomorphic(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl) -> BoolElt,AlgQuatElt
 { Returns whether there exists x such that xI=J. The inbuilt IsRightIsomorphic gives false positives for non-invertible ideals :-( }
     if IsRightInvertible(I) and IsRightInvertible(J) then
@@ -17,7 +19,7 @@ intrinsic MyIsRightIsomorphic(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl) -> BoolElt,Alg
         end if;
     else
         if not IsWeaklyEquivalent(I,J : Side:="Right") then
-            return false,_,_;
+            return false,_;
         else
             ccL:=LeftColonIdeal(J,I); // ccL*I = J
             assert IsRightInvertible(ccL) and IsLeftInvertible(ccL); //since they are right wk eq
@@ -48,48 +50,48 @@ intrinsic BrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> A
 
   if Side eq "Right" then
       for i -> Ii, j -> Ij in classes do
-          zb_Ij := ZBasis(Ij);
-          zb_nIj:=[ n*z : z in zb_Ij ];
-          Js:=[* *];
-          F:=FreeAbelianGroup(Degree(Algebra(O)));
-          mat_num:=Matrix(zb_Ij);
-          mat_den:=Matrix(zb_nIj);
-          rel:=[F ! Eltseq(x) : x in Rows(mat_den*mat_num^-1)];
-          Q,q:=quo<F|rel>;
-
-          /*        
-          // LowIndexProcess seems to produce more subgroups than Subgroups, and it is slower. This is very weird.
-          QP,f:=FPGroup(Q);
-          subg:=LowIndexProcess(QP,<n^2,n^2>);
-          iH:=0;
-          while not IsEmpty(subg) do
-            iH +:=1;
-            H := ExtractGroup(subg);
-            NextSubgroup(~subg);
-            geninF:=[(f(QP ! x))@@q : x in Generators(H)];
-            coeff:=[Eltseq(x) : x in geninF];
-            J:=rideal<O| [&+[zb_Ij[i]*x[i] : i in [1..#zb_Ij]] : x in coeff] cat zb_nIj>;
-            if Index(Ij,J) eq n^2 then //this means that the lift of H is actually equal to J.
-                if IsWeaklyEquivalent(J,Ii : Side:="Right") and MyIsRightIsomorphic(J,Ii) then
-                    Append(~Js,J);
-                end if;
-            end if;
-          end while;
-          */
-          // with Subgroups, much slower because we need to generate all subgroups and then sieve out the ones that have the Index = n^2
-          subg:=Subgroups(Q);
-          for H in subg do
-            if Index(Q,H`subgroup) eq n^2 then
-                gensinF:=[(Q!g)@@q : g in Generators(H`subgroup)];
-                coeff:=[Eltseq(x) : x in gensinF];
-                J:=rideal<O| [&+[zb_Ij[i]*x[i] : i in [1..#zb_Ij]] : x in coeff] cat zb_nIj>;
-                if Index(Ij,J) eq n^2 then //this means that the lift of H is actually equal to J.
-                    if IsWeaklyEquivalent(J,Ii : Side:="Right") and MyIsRightIsomorphic(J,Ii) then
-                        Append(~Js,J);
-                    end if;
-                end if;
-            end if;
-          end for;
+// Using subgroups
+//           zb_Ij := ZBasis(Ij);
+//           zb_nIj:=[ n^2*z : z in zb_Ij ];
+//           Js:=[* *];
+//           F:=FreeAbelianGroup(Degree(Algebra(O)));
+//           mat_num:=Matrix(zb_Ij);
+//           mat_den:=Matrix(zb_nIj);
+//           rel:=[F ! Eltseq(x) : x in Rows(mat_den*mat_num^-1)];
+//           Q,q:=quo<F|rel>;
+// 
+//           /*        
+//           // LowIndexProcess seems to produce more geninF:=[(f(QP ! x))@@q : x in Generators(H)];
+//             coeff:=[Eltseq(x) : x in geninF];
+//             J:=rideal<O| [&+[zb_Ij[i]*x[i] : i in [1..#zb_Ij]] : x in coeff] cat zb_nIj>;
+//             if Index(Ij,J) eq n^2 then //this means that the lift of H is actually equal to J.
+//                 if IsWeaklyEquivalent(J,Ii : Side:="Right") and MyIsRightIsomorphic(J,Ii) then
+//                     Append(~Js,J);
+//                 end if;
+//             end if;
+//           end while;
+//           */
+//           // with Subgroups, much slower because we need to generate all subgroups and then sieve out the ones that have the Index = n^2
+//           subg:=Subgroups(Q);
+//           for H in subg do
+//             if Index(Q,H`subgroup) eq n^2 then
+//                 gensinF:=[(Q!g)@@q : g in Generators(H`subgroup)];
+//                 coeff:=[Eltseq(x) : x in gensinF];
+//                 J:=rideal<O| [&+[zb_Ij[i]*x[i] : i in [1..#zb_Ij]] : x in coeff] cat zb_nIj>;
+//       if RightOrder(J) eq O then
+//         assert exists{ I : I in classes | IsRightIsomorphic(I,J) };
+//       end if;
+//                 if Index(Ij,J) eq n^2 then //this means that the lift of H is actually equal to J.
+//                     if IsWeaklyEquivalent(J,Ii : Side:="Right") and MyIsRightIsomorphic(J,Ii) then
+//                         Append(~Js,J);
+//                     end if;
+//                 end if;
+//             end if;
+//           end for;
+          nIj:=rideal<O|[n^2*z: z in ZBasis(Ij)]>;
+          candidates:=IntermediateIdealsWithPrescribedRightOrder(O,Ij,nIj);
+          assert forall{ J : J in candidates | exists{ I : I in classes | MyIsRightIsomorphic(I,J) }};
+          Js:=[* J : J in candidates | Index(Ij,J) eq n^2 and IsWeaklyEquivalent(J,Ii : Side:="Right") and MyIsRightIsomorphic(J,Ii) *];
           M[i,j] := #Js;
       end for;
       return M;
@@ -102,6 +104,35 @@ intrinsic BrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> A
       return M;
   end if;
 
+end intrinsic;
+
+intrinsic InvBrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatElt
+{
+}
+  require Side in {"Left","Right"} : "Side should be either \"Left\" or \"Right\".";
+
+  classes:=RightIdealClasses(O);
+
+  M := ZeroMatrix(Integers(), #classes);
+
+  if Side eq "Right" then
+      for i -> Ii, j -> Ij in classes do
+          nIj:=rideal<O|[n^2*z: z in ZBasis(Ij)]>;
+          candidates:=IntermediateIdealsWithPrescribedRightOrder(O,Ij,nIj);
+          candidates:=[ J : J in candidates | IsRightInvertible(J) ];
+          assert forall{ J : J in candidates | exists{ I : I in classes | MyIsRightIsomorphic(I,J) }};
+          Js:=[* J : J in candidates | Index(Ij,J) eq n^2 and IsWeaklyEquivalent(J,Ii : Side:="Right") and MyIsRightIsomorphic(J,Ii) *];
+          M[i,j] := #Js;
+      end for;
+      return M;
+  end if;
+
+  if Side eq "Left" then
+      for i -> Ii, j -> Ij in classes do
+        error "not implemented yet";
+      end for;
+      return M;
+  end if;
 end intrinsic;
 
 /* TEST

@@ -9,24 +9,25 @@
     O1 := MaximalOrder(B);
     printf "We create the order O = ZZ + %o*O1 in the algebra B=(-1,-%o/QQ), where O1 is the maximal order Z[i,j,k] of B.\n",s,p;
     O := QuaternionOrder([s*i,s*j,s*k]);
-    print "We compute the weak right equivalence classes of O1...\n";
+    print "We compute the weak right equivalence classes of O...\n";
     time weak_right_classes:= WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#weak_right_classes;
-    print "We compute the right equivalence classes of O1...\n";
+    print "We compute the right equivalence classes of O...\n";
     time right_classes := EquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#right_classes;
 
     #[* I : I in right_classes | IsRightInvertible(I) *];
 
     for n in [1] cat PrimesUpTo(101) do
-        "\nn=",n;
+        "\nn=",n, "n mod 4 = ", n mod 4;
         "using Enumerate";
         B:=BrandtMatrix(n,O : Side:="Right");
         B;
-        "naive approach";
-        Bn:=BrandtMatrix_naive(n,O : Side:="Right");
-        Bn;
-        "B == B_naive ? ",B eq Bn;
+        
+        //"naive approach";
+        //Bn:=BrandtMatrix_naive(n,O : Side:="Right");
+        //Bn;
+        //"B == B_naive ? ",B eq Bn;
     end for;
 
 /*

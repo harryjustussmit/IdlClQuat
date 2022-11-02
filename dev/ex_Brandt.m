@@ -1,14 +1,17 @@
 /* vim: set syntax=magma :*/
 
     AttachSpec("~/IdlClQuat/spec");
+    Attach("~/IdlClQuat/dev/IntermediateIdeals.m");
     Attach("~/IdlClQuat/dev/BrandtMat_naive.m");
+    Attach("~/IdlClQuat/dev/InvBrandtMat.m");
 
-    // p:=3; s:=2; //exin the paper
-    p:=5; s:=4;
+    p:=3; s:=2; //example in the paper
+    //p:=23; s:=2;
     B<i, j, k> := QuaternionAlgebra(RationalField(), -1, -p);
     O1 := MaximalOrder(B);
-    printf "We create the order O = ZZ + %o*O1 in the algebra B=(-1,-%o/QQ), where O1 is the maximal order Z[i,j,k] of B.\n",s,p;
+    printf "We create the order O = ZZ + %o*O1 in the algebra B=(-1,-%o/QQ), where O1 is the maximal order of B.\n",s,p;
     O := QuaternionOrder([s*i,s*j,s*k]);
+    IsEichler(O);
     print "We compute the weak right equivalence classes of O...\n";
     time weak_right_classes:= WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#weak_right_classes;
@@ -21,19 +24,42 @@
     "discriminants of O1 and O",
     Discriminant(O1),
     Discriminant(O);
+    filename:=Sprintf("~/IdlClQuat/dev/p_%o_s_%o.txt",p,s);
     for n in [1] cat PrimesUpTo(101) do
         "\nn=",n, ", n mod p+1 = ", n mod (p+1);
+        "\nInvertible";
+    try
+        "using Enumerate";
+        B:=InvBrandtMatrix(n,O : Side:="Right");
+        rr:=[&+Eltseq(r): r in Rows(Transpose(B)) ];
+        "sum of each columns == n+1",
+        #Seqset(rr) eq 1 and rr[1] eq n+1; 
+        B;
+        //fprintf filename,"n=%o\nT(n)=\n%o\n\n",n,B; 
+        "naive approach";
+        Bn:=InvBrandtMatrix_naive(n,O : Side:="Right");
+        Bn;
+        "B == B_naive ? ",B eq Bn;
+    catch e
+        e;
+    end try;
+
+        "\nAll";
+    try
         "using Enumerate";
         B:=BrandtMatrix(n,O : Side:="Right");
         rr:=[&+Eltseq(r): r in Rows(Transpose(B)) ];
         "sum of each columns == n+1",
         #Seqset(rr) eq 1 and rr[1] eq n+1; 
-        //B;
-        
-        //"naive approach";
-        //Bn:=BrandtMatrix_naive(n,O : Side:="Right");
-        //Bn;
-        //"B == B_naive ? ",B eq Bn;
+        B;
+        //fprintf filename,"n=%o\nT(n)=\n%o\n\n",n,B; 
+        "naive approach";
+        Bn:=BrandtMatrix_naive(n,O : Side:="Right");
+        Bn;
+        "B == B_naive ? ",B eq Bn;
+    catch e
+        e;
+    end try;
     end for;
 
 /*
