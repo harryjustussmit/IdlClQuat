@@ -9,8 +9,23 @@
     O:=Order([s*i,s*j,s*k]);
     O1:=MaximalOrder(O);
     "IsEichler(O)",IsEichler(O);
+
+    Attach("Quotients.m");
+    Attach("WkEqClasses.m");
+    Attach("IntermediateIdeals.m");
+    time wk:=WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right" ); #wk;
+
+    O2:=Order([ (i+j)*z*(i+j)^-1 : z in ZBasis(O1)] ); //Conjugate to O1
+    assert not O1 eq O2;
+    assert IsMaximal(O2);
+    E:=O1 meet O2;
+    assert IsEichler(E);
+    forall{ z : z in ZBasis(O) | z in O2 };
+
+
     Attach("Index.m");
     "Index(O1,O)",Index(O1,O);
+    "Index(O2,O)",Index(O2,O);
     O eq O1;
     cc0:=LeftColonIdeal(O,O1);
     ZBasis(cc0);
@@ -24,12 +39,17 @@
     ZBasis(cc) eq ZBasis(cc0);
     
     Attach("Quotients.m");
-    Q,q:=Quotient(1*O1,cc);
+    Q,q:=Quotient(1*O1,cc); Q;
+    Q,q:=Quotient(1*O2,RightColonIdeal(O,O2)); Q;
     
     Attach("IntermediateIdeals.m");
-    //time #IntermediateIdealsWithPrescribedRightOrder(O,1*O1,cc);
+    time #IntermediateIdealsWithPrescribedRightOrder(O,1*O1,cc);
+    time #IntermediateIdealsWithPrescribedRightOrder(E,1*O1,RightColonIdeal(E,O1));
+    time #IntermediateIdealsWithPrescribedRightOrder(E,1*O2,RightColonIdeal(E,O2));
 
     Attach("WkEqClasses.m");
+    wk:=WeakEquivalenceClassesWithPrescribedOrder(E : Side:="Right" ); assert #wk eq 1; //Eichler case
+    delete O`RightWeakEquivalenceClassesWithPrescribedOrder;
     time wk:=WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right" ); #wk;
 
     //quit;
