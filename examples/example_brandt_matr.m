@@ -6,12 +6,12 @@
     s:=2;
     B<i, j, k> := QuaternionAlgebra(RationalField(), -1, -p);
     O1 := MaximalOrder(B);
-    printf "We create the order O = ZZ + %o*O1 in the algebra B=(-1,-%o/QQ), where O1 is the maximal order Z[i,j,k] of B.\n",s,p;
+    printf "We create the order O = ZZ + %o*O1 in the algebra B=(-1,-%o/QQ), where O1 is the maximal order of B with Z-basis %o.\n",s,p,ZBasis(O1);
     O := QuaternionOrder([s*i,s*j,s*k]);
-    print "We compute the weak right equivalence classes of O1...\n";
+    print "We compute the weak right equivalence classes of O...\n";
     time weak_right_classes:= WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#weak_right_classes;
-    print "We compute the right equivalence classes of O1...\n";
+    print "We compute the right equivalence classes of O...\n";
     time right_classes := EquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#right_classes;
 

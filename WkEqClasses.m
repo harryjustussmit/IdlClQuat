@@ -66,19 +66,27 @@ intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgQuatOrd : Side:="Left"
   if Side eq "Right" then
     ff := LeftColonIdeal(O, T);
   end if;
-
+  classes:=[* *];
+  ///////////////////////////////////////////////
+  // Using IntermediateIdealsWithPrescribediRightOrder
+  candidates:=IntermediateIdealsWithPrescribedRightOrder(O,1*T,ff);
+  for I in candidates do
+    if not exists{ J : J in classes | IsWeaklyEquivalent(I,J : Side:=Side)} then
+        Append(~classes,I);
+    end if;
+  end for;
+  ///////////////////////////////////////////////
+   
+  /*
+  ///////////////////////////////////////////////
+  // LowIndexProcess seems to produce more subgroups than Subgroups, and it is slower. This is very weird.
   T_ZBasis := ZBasis(T);
   ff_ZBasis := ZBasis(ff);
-  classes:=[* *];
-  // we list all ideals between T and ff. Improve with stable subgroup routine
   F:=FreeAbelianGroup(Degree(Algebra(O)));
   matT:=Matrix(T_ZBasis);
   matff:=Matrix(ff_ZBasis);
   rel:=[F ! Eltseq(x) : x in Rows(matff*matT^-1)];
-
-  Q,q:=quo<F|rel>;
-  /*
-  // LowIndexProcess seems to produce more subgroups than Subgroups, and it is slower. This is very weird.
+  Q,q:=quo<F|rel>; 
   QP,f:=FPGroup(Q);
   subg:=LowIndexProcess(QP,<1,#QP>);
 
@@ -105,7 +113,18 @@ intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgQuatOrd : Side:="Left"
       Append(~classes,I);
     end if;
   end while;
+  ///////////////////////////////////////////////
   */
+  /*
+  ///////////////////////////////////////////////
+  // using Subgroups. Kept for debug purposes.
+  T_ZBasis := ZBasis(T);
+  ff_ZBasis := ZBasis(ff);
+  F:=FreeAbelianGroup(Degree(Algebra(O)));
+  matT:=Matrix(T_ZBasis);
+  matff:=Matrix(ff_ZBasis);
+  rel:=[F ! Eltseq(x) : x in Rows(matff*matT^-1)];
+  Q,q:=quo<F|rel>; 
   subg:=Subgroups(Q);
   for H in subg do
     gensinF:=[(Q!g)@@q : g in Generators(H`subgroup)];
@@ -125,6 +144,8 @@ intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgQuatOrd : Side:="Left"
       Append(~classes,I);
     end if;
   end for;
+  ///////////////////////////////////////////////
+  */
 
   // assign attributes
   if Side eq "Left" then

@@ -1,7 +1,7 @@
 /* vim: set syntax=magma :*/
 
     AttachSpec("~/IdlClQuat/spec");
-    Attach("~/IdlClQuat/dev/BrandtMat_naive.m");
+    //Attach("~/IdlClQuat/dev/BrandtMat_naive.m");
 
     // this is example 41.1.2, page 750 from JV's book on Quaternions v. 1.0.5
 
@@ -21,8 +21,8 @@
         "using Enumerate";
         B:=BrandtMatrix(n,O : Side:="Right");
         B;
-        "naive approach";
-        Bn:=BrandtMatrix_naive(n,O : Side:="Right");
-        Bn;
-        "B == B_naive ? ",B eq Bn;
+        // "naive approach";
+        // Bn:=BrandtMatrix_naive(n,O : Side:="Right");
+        // Bn;
+        // "B == B_naive ? ",B eq Bn;
     end for;

@@ -2,6 +2,7 @@
 Index.m
 IsCompatible.m
 Norm.m
+IntermediateIdeals.m
 Quotients.m
 ColonIdl.m
 IsInvertible.m

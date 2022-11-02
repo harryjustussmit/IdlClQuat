@@ -22,8 +22,8 @@ intrinsic BrandtMatrix(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatE
           ind:=Index(Ij,Ii);
           test1,sqrt_num:=IsSquare(Numerator(ind));
           test2,sqrt_den:=IsSquare(Denominator(ind));
-          sqrt:=sqrt_num/sqrt_den;
           assert test1 and test2;
+          sqrt:=sqrt_num/sqrt_den;
           norm:=n/sqrt; 
           vprint BrandtMatr,2: i,j,ind;
           IjcolonIiq := LeftColonIdeal(Ij, Ii);
