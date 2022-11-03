@@ -1,7 +1,7 @@
 /* vim: set syntax=magma :*/
 
     AttachSpec("~/IdlClQuat/spec");
-    //Attach("~/IdlClQuat/dev/BrandtMat_naive.m");
+    AttachSpec("~/hermite/Hermite.spec");
 
     // this is example 41.1.2, page 750 from JV's book on Quaternions v. 1.0.5
 

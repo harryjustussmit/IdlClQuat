@@ -7,6 +7,7 @@ Quotients.m
 ColonIdl.m
 IsInvertible.m
 WkEqClasses.m
+ClassSet.m
 EqClasses.m
 BrandtMat.m
 }

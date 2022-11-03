@@ -1,6 +1,7 @@
 /* vim: set syntax=magma :*/
 
     AttachSpec("~/IdlClQuat/spec");
+    AttachSpec("~/hermite/Hermite.spec");
 
     p:=3;
     s:=2;

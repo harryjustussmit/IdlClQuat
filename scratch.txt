@@ -57,6 +57,7 @@
     time int_test:=[ I : I in {@ rideal<O| [ g@@q : g in  Generators(H`subgroup)] cat ZBasis(cc)> : 
                 H in Subgroups(Q) @} | RightOrder(I) eq O ];
     assert #int eq #int_test;
+    time #IntermediateIdealsWithTrivialExtensionAndPrescribedRightOrder(O,1*O1,cc,O1);
 
     cc:=RightColonIdeal(O,O2);
     time int:=IntermediateIdealsWithPrescribedRightOrder(O,1*O2,cc); #int;
@@ -64,9 +65,12 @@
     time int_test:=[ I : I in {@ rideal<O| [ g@@q : g in  Generators(H`subgroup)] cat ZBasis(cc)> : 
                 H in Subgroups(Q) @} | RightOrder(I) eq O ];
     assert #int eq #int_test;
+    time #IntermediateIdealsWithTrivialExtensionAndPrescribedRightOrder(O,1*O2,cc,O2);
 
     time #IntermediateIdealsWithPrescribedRightOrder(E,1*O1,RightColonIdeal(E,O1));
+    time #IntermediateIdealsWithTrivialExtensionAndPrescribedRightOrder(E,1*O1,RightColonIdeal(E,O1),O1);
     time #IntermediateIdealsWithPrescribedRightOrder(E,1*O2,RightColonIdeal(E,O2));
+    time #IntermediateIdealsWithTrivialExtensionAndPrescribedRightOrder(E,1*O2,RightColonIdeal(E,O2),O2);
 
     Attach("WkEqClasses.m");
     wk:=WeakEquivalenceClassesWithPrescribedOrder(E : Side:="Right" ); 
@@ -90,6 +94,21 @@
     for I in wk do 
         Norm(I),Index(1*O,I);
     end for;
+    
+    AttachSpec("~/hermite/Hermite.spec");
+    time #RightClassSet(E);
+    time #RightClassSet(O1);
+    time #RightClassSet(O2);
+    time #RightClassSet(O);
+
+
+
+
+
+
+
+
+
     //quit;
 
 
