@@ -5,25 +5,6 @@ freeze;
 declare attributes AlgAssVOrd : LeftWeakEquivalenceClassesWithPrescribedOrder,
                                 RightWeakEquivalenceClassesWithPrescribedOrder;
 
-hnf:=function(M)
-//input: a matrix over RationalsOverNumberField()
-//output: the matrix in HNF and the denominator
-  M:=ChangeRing(M,Rationals());
-  d:=Denominator(M);
-  M:=ChangeRing(d*M,Integers());
-  N:=Rank(M);
-  H:=HermiteForm(M);
-  H:=Matrix(Rows(H)[1..N]);
-  H:=(1/d)*H;
-  d:=Denominator(H);
-  return <d,d*H>;
-end function;
-
-my_eq:=function(I,J)
-// given lattices I and J check if I = J
-    return hnf(Matrix(ZBasis(I))) eq hnf(Matrix(ZBasis(J)));
-end function;
-
 intrinsic IsWeaklyEquivalent(I::AlgAssVOrdIdl, J::AlgAssVOrdIdl : Side:="Both") -> Bool, Bool
 {
   Returns two booleans by default: firstly whether or not the lattices I and J are weakly left equivalent, secondly whether or not I and J are weakly right equivalent. When "Side" is set to "Left" or "Right", only one of these is returned.
@@ -40,8 +21,6 @@ intrinsic IsWeaklyEquivalent(I::AlgAssVOrdIdl, J::AlgAssVOrdIdl : Side:="Both") 
     IsCompatible(JcolonIleft, IcolonJleft) and
     ((IcolonJleft * JcolonIleft) eq ideal<LeftOrder(IcolonJleft) | 1>) and
     ((JcolonIleft * IcolonJleft) eq ideal<RightOrder(IcolonJleft) | 1>);   
-    //my_eq((IcolonJleft * JcolonIleft),OL) and 
-    //my_eq((JcolonIleft * IcolonJleft),OR);
   end if;
 
   if Side ne "Right" then
@@ -72,7 +51,7 @@ intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgAssVOrd : Side:="Left"
     
   method:="IntermediateRightIdealsWithPrescribedRightOrder";
   // method:="LowIndexProcess"; //for debug
-  method:="Subgroups"; //for debug
+  // method:="Subgroups"; //for debug
    
   "Using method : ",method; 
 
@@ -89,11 +68,11 @@ intrinsic WeakEquivalenceClassesWithPrescribedOrder(O::AlgAssVOrd : Side:="Left"
   // faster if T is instead the smallest overorder T of O such that T*TraceDual(O) is invertible
 
   if Side eq "Left" then
-    ff := RightColonIdeal(O, T);
+    ff := LeftColonIdeal(O, T);
   end if;
 
   if Side eq "Right" then
-    ff := LeftColonIdeal(O, T);
+    ff := RightColonIdeal(O, T);
   end if;
   classes:=[* *];
   if method eq "IntermediateRightIdealsWithPrescribedRightOrder" then

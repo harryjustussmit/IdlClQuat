@@ -1,6 +1,7 @@
 /* vim: set syntax=magma :*/
 
     Attach("ColonIdl.m");
+    Attach("IsCompatible.m");
     QQ:=RationalsAsNumberField();
     a:=-1; 
     b:=-3;
@@ -13,7 +14,18 @@
     Attach("Quotients.m");
     Attach("WkEqClasses.m");
     Attach("IntermediateIdeals.m");
-    time wk:=WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right" ); #wk;
+    time wk:=WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right" );
+    assert #wk eq 2;
+    assert forall{ I : I in wk | RightOrder(I) eq O };
+    assert forall{ I : I in wk | I subset rideal<O|ZBasis(O1)> };
+    assert forall{ I : I in wk | rideal<O|ZBasis(RightColonIdeal(O,O1))> subset I };
+    assert #{ I : I in wk } eq #wk;
+    for i,j in [1..#wk] do
+        I:=wk[i]; J:=wk[j];
+        if i ne j and I eq J then
+            i,j,IsWeaklyEquivalent(I,J : Side:="Right");
+        end if;
+    end for;
 
     O2:=Order([ (i+j)*z*(i+j)^-1 : z in ZBasis(O1)] ); //Conjugate to O1
     assert not O1 eq O2;
@@ -39,19 +51,45 @@
     ZBasis(cc) eq ZBasis(cc0);
     
     Attach("Quotients.m");
-    Q,q:=Quotient(1*O1,cc); Q;
-    Q,q:=Quotient(1*O2,RightColonIdeal(O,O2)); Q;
-    
     Attach("IntermediateIdeals.m");
-    time #IntermediateIdealsWithPrescribedRightOrder(O,1*O1,cc);
+    time int:=IntermediateIdealsWithPrescribedRightOrder(O,1*O1,cc); #int;
+    Q,q:=Quotient(1*O1,cc);
+    time int_test:=[ I : I in {@ rideal<O| [ g@@q : g in  Generators(H`subgroup)] cat ZBasis(cc)> : 
+                H in Subgroups(Q) @} | RightOrder(I) eq O ];
+    assert #int eq #int_test;
+
+    cc:=RightColonIdeal(O,O2);
+    time int:=IntermediateIdealsWithPrescribedRightOrder(O,1*O2,cc); #int;
+    Q,q:=Quotient(1*O2,cc); Q;
+    time int_test:=[ I : I in {@ rideal<O| [ g@@q : g in  Generators(H`subgroup)] cat ZBasis(cc)> : 
+                H in Subgroups(Q) @} | RightOrder(I) eq O ];
+    assert #int eq #int_test;
+
     time #IntermediateIdealsWithPrescribedRightOrder(E,1*O1,RightColonIdeal(E,O1));
     time #IntermediateIdealsWithPrescribedRightOrder(E,1*O2,RightColonIdeal(E,O2));
 
     Attach("WkEqClasses.m");
-    wk:=WeakEquivalenceClassesWithPrescribedOrder(E : Side:="Right" ); assert #wk eq 1; //Eichler case
+    wk:=WeakEquivalenceClassesWithPrescribedOrder(E : Side:="Right" ); 
+    assert #wk eq 1; //Eichler case
     delete O`RightWeakEquivalenceClassesWithPrescribedOrder;
-    time wk:=WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right" ); #wk;
+    time wk:=WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right" );
+    assert #wk eq 2;
+    // here it uses O2 for some reason. The resulting quotient is bigger.
+    assert forall{ I : I in wk | RightOrder(I) eq O };
+    assert forall{ I : I in wk | I subset rideal<O|ZBasis(O2)> };
+    assert forall{ I : I in wk | rideal<O|ZBasis(RightColonIdeal(O,O2))> subset I };
+    assert #{ I : I in wk } eq #wk;
+    for i,j in [1..#wk] do
+        I:=wk[i]; J:=wk[j];
+        if i ne j then
+            assert not IsWeaklyEquivalent(I,J : Side:="Right");
+        end if;
+    end for;
 
+    Attach("Norm.m");
+    for I in wk do 
+        Norm(I),Index(1*O,I);
+    end for;
     //quit;
 
 
