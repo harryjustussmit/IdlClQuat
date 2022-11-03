@@ -69,7 +69,7 @@
     end for;
 
     // we print the theta series in latex code
-    for i,j in [1..#full_class_set] do
+    for i,j in [1..#right_classes] do
         mf:=mfs[i,j];
         str:=Sprintf("\\frac{%o}{%o}+",Numerator(mf[1]),Denominator(mf[1])) cat 
             Sprintf("%oq+",mf[2] eq 1 select "" else mf[2]) cat
