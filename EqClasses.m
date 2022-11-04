@@ -116,8 +116,8 @@ intrinsic EquivalenceClassesWithPrescribedOrder(O::AlgAssVOrd : Side:="Left") ->
       if Side eq "Left" then
         for i,j in [1..#classes] do
             if i ne j then
-                I:=classes[i];
-                J:=classes[j];
+                I:=lideal<O|ZBasis(classes[i])>;
+                J:=lideal<O|ZBasis(classes[j])>;
                 assert not IsLeftIsomorphic(I,J);
             end if;
         end for;
@@ -126,8 +126,8 @@ intrinsic EquivalenceClassesWithPrescribedOrder(O::AlgAssVOrd : Side:="Left") ->
       if Side eq "Right" then
         for i,j in [1..#classes] do
             if i ne j then
-                I:=classes[i];
-                J:=classes[j];
+                I:=rideal<O|ZBasis(classes[i])>;
+                J:=rideal<O|ZBasis(classes[j])>;
                 assert not IsRightIsomorphic(I,J);
             end if;
         end for;

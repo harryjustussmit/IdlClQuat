@@ -7,7 +7,9 @@ Quotients.m
 ColonIdl.m
 IsInvertible.m
 WkEqClasses.m
+IsIsomorphic.m
 ClassSet.m
 EqClasses.m
+Enumerate.m
 BrandtMat.m
 }

@@ -4,25 +4,52 @@
     AttachSpec("~/hermite/Hermite.spec");
 
     // this is example 41.1.2, page 750 from JV's book on Quaternions v. 1.0.5
-
+    t0:=Cputime();
+    // using AlgQuatOrd
     p:=23;
     B<i, j, k> := QuaternionAlgebra(RationalField(), -1, -p);
     O := MaximalOrder(B);
     time weak_right_classes:= WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#weak_right_classes;
     assert #weak_right_classes eq 1;
-    print "We compute the right equivalence classes of O1...\n";
+    print "We compute the right equivalence classes of O...\n";
+    time right_classes := EquivalenceClassesWithPrescribedOrder(O : Side:="Right");
+    printf "...there are %o of them.\n",#right_classes;
+    assert #right_classes eq 3;
+    
+    brandt_AlgQuatOrd:=[];
+    for n in [1] cat PrimesUpTo(101) do
+        "\nn=",n;
+        B:=BrandtMatrix(n,O : Side:="Right");
+        Append(~brandt_AlgQuatOrd,B);
+        B;
+    end for;
+    t_AlgQuatOrd:=Cputime(t0);
+
+
+    t0:=Cputime();
+    // using AlgAssVOrd
+    p:=23;
+    B<i, j, k> := QuaternionAlgebra(RationalsAsNumberField(), -1, -p);
+    O := MaximalOrder(B);
+    time weak_right_classes:= WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
+    printf "...there are %o of them.\n",#weak_right_classes;
+    assert #weak_right_classes eq 1;
+    print "We compute the right equivalence classes of O...\n";
     time right_classes := EquivalenceClassesWithPrescribedOrder(O : Side:="Right");
     printf "...there are %o of them.\n",#right_classes;
     assert #right_classes eq 3;
 
+    brandt_AlgAssVOrd:=[];
     for n in [1] cat PrimesUpTo(101) do
         "\nn=",n;
-        "using Enumerate";
         B:=BrandtMatrix(n,O : Side:="Right");
+        Append(~brandt_AlgAssVOrd,B);
         B;
-        // "naive approach";
-        // Bn:=BrandtMatrix_naive(n,O : Side:="Right");
-        // Bn;
-        // "B == B_naive ? ",B eq Bn;
     end for;
+    t_AlgAssVOrd:=Cputime(t0);
+
+    "timings using AlgQuatOrd: ",t_AlgQuatOrd;
+    "timings using AlgAssVOrd: ",t_AlgAssVOrd;
+
+    assert brandt_AlgQuatOrd eq brandt_AlgAssVOrd; 
