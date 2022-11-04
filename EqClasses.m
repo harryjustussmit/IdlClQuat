@@ -39,6 +39,30 @@ intrinsic EquivalenceClassesWithPrescribedOrder(O::AlgQuatOrd : Side:="Left") ->
     end if;
   end for;
 
+  // TESTS
+  debug:=true;
+  if debug then
+      if Side eq "Left" then
+        for i,j in [1..#classes] do
+            if i ne j then
+                I:=classes[i];
+                J:=classes[j];
+                assert not IsLeftIsomorphic(I,J);
+            end if;
+        end for;
+      end if;
+
+      if Side eq "Right" then
+        for i,j in [1..#classes] do
+            if i ne j then
+                I:=classes[i];
+                J:=classes[j];
+                assert not IsRightIsomorphic(I,J);
+            end if;
+        end for;
+      end if;
+  end if;
+
   // assign attributes
   if Side eq "Left" then
     O`LeftEquivalenceClassesWithPrescribedOrder:=classes;
@@ -85,6 +109,30 @@ intrinsic EquivalenceClassesWithPrescribedOrder(O::AlgAssVOrd : Side:="Left") ->
       classes cat:= [* J*I : J in inv_cl *];
     end if;
   end for;
+
+  // TESTS
+  debug:=true;
+  if debug then
+      if Side eq "Left" then
+        for i,j in [1..#classes] do
+            if i ne j then
+                I:=classes[i];
+                J:=classes[j];
+                assert not IsLeftIsomorphic(I,J);
+            end if;
+        end for;
+      end if;
+
+      if Side eq "Right" then
+        for i,j in [1..#classes] do
+            if i ne j then
+                I:=classes[i];
+                J:=classes[j];
+                assert not IsRightIsomorphic(I,J);
+            end if;
+        end for;
+      end if;
+  end if;
 
   // assign attributes
   if Side eq "Left" then
