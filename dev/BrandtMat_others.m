@@ -2,9 +2,9 @@
 
 freeze;
 
-declare verbose BrandtMatr_naive,2;
+// Here we collect a bunch of other versions of BrandMatrices that were produced during the developement and debug phases. They need to be optimized and checked carefully. Use at your own risk. 
 
-// TODO In both BrandtMatrix_naive and InvBrandtMatrix_naive it would be better to have an IntermediateIdeals with goes through the ideals using MaximalIntermediateIdeals instead of the minimal one. The reason is that then we can stop use the fact that we are looking only for ideals of order n^2.
+declare verbose BrandtMatr_naive,2;
 
 intrinsic MyIsRightIsomorphic(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl) -> BoolElt,AlgQuatElt
 { Returns whether there exists x such that xI=J. The inbuilt IsRightIsomorphic gives false positives for non-invertible ideals :-( }
@@ -34,8 +34,6 @@ intrinsic MyIsRightIsomorphic(I::AlgQuatOrdIdl, J::AlgQuatOrdIdl) -> BoolElt,Alg
         end if;
     end if;
 end intrinsic;
-
-
 
 intrinsic BrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatElt
 {
@@ -106,6 +104,56 @@ intrinsic BrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> A
 
 end intrinsic;
 
+intrinsic InvBrandtMatrix(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatElt
+{
+}
+  require Side in {"Left","Right"} : "Side should be either \"Left\" or \"Right\".";
+
+  classes:=RightClassSet(O);
+
+  M := ZeroMatrix(Integers(), #classes);
+
+  if Side eq "Right" then
+      for i -> Ii, j -> Ij in classes do
+          ind:=Index(Ij,Ii);
+          test1,sqrt_num:=IsSquare(Numerator(ind));
+          test2,sqrt_den:=IsSquare(Denominator(ind));
+          sqrt:=sqrt_num/sqrt_den;
+          assert test1 and test2;
+          norm:=n/sqrt; 
+          vprint BrandtMatr,2: i,j,ind;
+          IjcolonIiq := LeftColonIdeal(Ij, Ii);
+          enum:=Enumerate(IjcolonIiq, norm, norm); //elements of reduced norm = norm, up to a sign. Because of this we multiply by 2 in the definition of M[i,j].
+          assert forall{ a : a in enum | Norm(a) eq norm };
+          assert 2*#enum/#Units(LeftOrder(Ii)) eq #Seqset([ rideal<O|[a*z : z in ZBasis(Ii)]> : a in enum ]); 
+          for a in enum do
+              assert forall{z : z in ZBasis(Ii) | a*z in Ij};
+              ind_a:=Index(Ij,rideal<O|[a*z : z in ZBasis(Ii)]>);
+              //norm,ind_a;
+              assert ind_a eq n^2;
+          end for;
+          M[i,j] := 2*#enum/#Units(LeftOrder(Ii));
+      end for;
+      return M;
+  end if;
+
+  if Side eq "Left" then
+      for i -> Ii, j -> Ij in classes do
+          //norm:=n*Norm(Norm(Ij)/Norm(Ii));
+          ind:=Index(Ij,Ii);
+          test1,sqrt_num:=IsSquare(Numerator(ind));
+          test2,sqrt_den:=IsSquare(Denominator(ind));
+          sqrt:=sqrt_num/sqrt_den;
+          assert test1 and test2;
+          norm:=n/sqrt; 
+          IjcolonIiq := RightColonIdeal(Ij, Ii);
+          enum:=Enumerate(IjcolonIiq, norm, norm);
+          M[i,j] := 2*#enum/#Units(RightOrder(Ii));
+      end for;
+      return M;
+  end if;
+end intrinsic;
+
 intrinsic InvBrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatElt
 {
 }
@@ -133,6 +181,70 @@ intrinsic InvBrandtMatrix_naive(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -
       end for;
       return M;
   end if;
+end intrinsic;
+
+intrinsic WeakBrandtMatrix(n::RngIntElt, O::AlgQuatOrd : Side := "Right") -> AlgMatElt
+{
+    only with wk classes
+}
+  require Side in {"Left","Right"} : "Side should be either \"Left\" or \"Right\".";
+
+  classes:=WeakEquivalenceClassesWithPrescribedOrder(O : Side:="Right");
+
+  M := ZeroMatrix(Integers(), #classes);
+
+  if Side eq "Right" then
+      for i -> Ii, j -> Ij in classes do
+// Using subgroups
+//           zb_Ij := ZBasis(Ij);
+//           zb_nIj:=[ n^2*z : z in zb_Ij ];
+//           Js:=[* *];
+//           F:=FreeAbelianGroup(Degree(Algebra(O)));
+//           mat_num:=Matrix(zb_Ij);
+//           mat_den:=Matrix(zb_nIj);
+//           rel:=[F ! Eltseq(x) : x in Rows(mat_den*mat_num^-1)];
+//           Q,q:=quo<F|rel>;
+// 
+//           /*        
+//           // LowIndexProcess seems to produce more geninF:=[(f(QP ! x))@@q : x in Generators(H)];
+//             coeff:=[Eltseq(x) : x in geninF];
+//             J:=rideal<O| [&+[zb_Ij[i]*x[i] : i in [1..#zb_Ij]] : x in coeff] cat zb_nIj>;
+//             if Index(Ij,J) eq n^2 then //this means that the lift of H is actually equal to J.
+//                 if IsWeaklyEquivalent(J,Ii : Side:="Right") and MyIsRightIsomorphic(J,Ii) then
+//                     Append(~Js,J);
+//                 end if;
+//             end if;
+//           end while;
+//           */
+//           // with Subgroups, much slower because we need to generate all subgroups and then sieve out the ones that have the Index = n^2
+//           subg:=Subgroups(Q);
+//           for H in subg do
+//             if Index(Q,H`subgroup) eq n^2 then
+//                 gensinF:=[(Q!g)@@q : g in Generators(H`subgroup)];
+//                 coeff:=[Eltseq(x) : x in gensinF];
+//                 J:=rideal<O| [&+[zb_Ij[i]*x[i] : i in [1..#zb_Ij]] : x in coeff] cat zb_nIj>;
+//                 if Index(Ij,J) eq n^2 then //this means that the lift of H is actually equal to J.
+//                     if IsWeaklyEquivalent(J,Ii : Side:="Right") then
+//                         Append(~Js,J);
+//                     end if;
+//                 end if;
+//             end if;
+//           end for;
+          nIj:=rideal<O|[n^2*z: z in ZBasis(Ij)]>;
+          candidates:=IntermediateIdealsWithPrescribedRightOrder(O,Ij,nIj);
+          Js:=[* J : J in candidates | Index(Ij,J) eq n^2 and IsWeaklyEquivalent(J,Ii : Side:="Right") *];
+          M[i,j] := #Js;
+      end for;
+      return M;
+  end if;
+
+  if Side eq "Left" then
+      for i -> Ii, j -> Ij in classes do
+        error "not implemented yet";
+      end for;
+      return M;
+  end if;
+
 end intrinsic;
 
 /* TEST
