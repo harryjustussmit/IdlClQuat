@@ -3,7 +3,7 @@
 freeze;
 
 function convert_to_AlgQuatOrd(O)
-// Given an AlgAssVOrd O in an AlgQuat B over RationalAsNumberField returns the re-definition of O as AlgQuatOrd over an AlgQuat over Rationals together with the natural bijection between the algebras
+// Given an AlgAssVOrd O in an AlgQuat B over RationalAsNumberField, returns the re-definition of O as AlgQuatOrd over an AlgQuat over Rationals together with the natural bijection between the algebras
     B:=Algebra(O);
     bas:=Basis(B); // 1,i,j,k
     a,b:=StandardForm(B);
