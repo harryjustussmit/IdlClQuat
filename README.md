@@ -24,5 +24,5 @@ References
 
 Stefano Marseglia, Harry Smit,
 
-TODO
+[`preprint`] https://arxiv.org/abs/2211.13156
 
