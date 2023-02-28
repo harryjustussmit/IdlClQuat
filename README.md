@@ -24,5 +24,6 @@ References
 
 Stefano Marseglia, Harry Smit,
 
-[`preprint`] https://arxiv.org/abs/2211.13156
+[`Ideal classes of orders in quaternion algebras`](https://arxiv.org/abs/2211.13156)
+arxiv.org/abs/2211.13156
 
