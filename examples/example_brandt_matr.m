@@ -1,4 +1,14 @@
 /* vim: set syntax=magma :*/
+/*
+    The code below is used to produce the data accompaying Example 7.1 in 
+        "Ideal classes of orders in quaternion algebras"
+    by Stefano Marseglia and Harry Smit,
+    with an Appendix by John Voight.
+
+    Increase the parameter 'Nmax' in case you want to compute more Brandt matrices and
+    consequently more coefficients of the modular forms.
+*/
+
 
     AttachSpec("~/IdlClQuat/spec");
     AttachSpec("~/hermite/Hermite.spec");
